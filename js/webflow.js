@@ -3812,7 +3812,9 @@
       "use strict";
       init_shared_constants();
       ({ IX2_RAW_DATA_IMPORTED: IX2_RAW_DATA_IMPORTED2 } = IX2EngineActionTypes_exports);
-      ixData = (state = Object.freeze({}), action) => {
+      ixData = (state = Object.freeze(
+        {}
+      ), action) => {
         switch (action.type) {
           case IX2_RAW_DATA_IMPORTED2: {
             return action.payload.ixData || Object.freeze({});
@@ -7682,7 +7684,11 @@
     }
     return "e" + elementCount++;
   }
-  function reifyState({ events, actionLists, site } = {}) {
+  function reifyState({
+    events,
+    actionLists,
+    site
+  } = {}) {
     const eventTypeMap = (0, import_reduce.default)(
       events,
       (result, event) => {
@@ -8387,7 +8393,11 @@
     });
     return totalDuration > 0 ? optimizeFloat(elapsedDuration / totalDuration) : 0;
   }
-  function reduceListToGroup({ actionList, actionItemId, rawData }) {
+  function reduceListToGroup({
+    actionList,
+    actionItemId,
+    rawData
+  }) {
     const { actionItemGroups, continuousParameterGroups } = actionList;
     const newActionItems = [];
     const takeItemUntilMatch = (actionItem) => {
@@ -8399,17 +8409,19 @@
       );
       return actionItem.id === actionItemId;
     };
-    actionItemGroups && // @ts-expect-error - TS7031 - Binding element 'actionItems' implicitly has an 'any' type.
-    actionItemGroups.some(({ actionItems }) => {
+    actionItemGroups && actionItemGroups.some(({ actionItems }) => {
       return actionItems.some(takeItemUntilMatch);
     });
-    continuousParameterGroups && // @ts-expect-error - TS7006 - Parameter 'paramGroup' implicitly has an 'any' type.
-    continuousParameterGroups.some((paramGroup) => {
-      const { continuousActionGroups } = paramGroup;
-      return continuousActionGroups.some(({ actionItems }) => {
-        return actionItems.some(takeItemUntilMatch);
-      });
-    });
+    continuousParameterGroups && continuousParameterGroups.some(
+      (paramGroup) => {
+        const { continuousActionGroups } = paramGroup;
+        return continuousActionGroups.some(
+          ({ actionItems }) => {
+            return actionItems.some(takeItemUntilMatch);
+          }
+        );
+      }
+    );
     return (0, import_timm4.setIn)(rawData, ["actionLists"], {
       [actionList.id]: {
         id: actionList.id,
@@ -9012,9 +9024,12 @@
       }, action) => {
         switch (action.type) {
           case IX2_RAW_DATA_IMPORTED4: {
-            return action.payload.ixParameters || {
-              /*mutable flat state*/
-            };
+            return (
+              // @ts-expect-error - Further investigation is needed as looks like IX2_RAW_DATA_IMPORTED is never triggered with ixParameters
+              action.payload.ixParameters || {
+                /*mutable flat state*/
+              }
+            );
           }
           case IX2_SESSION_STOPPED5: {
             return {
@@ -9052,7 +9067,6 @@
       init_IX2ParametersReducer();
       ({ ixElements: ixElements2 } = import_shared2.IX2ElementsReducer);
       IX2Reducer_default = (0, import_redux.combineReducers)({
-        // @ts-expect-error - TS2322 - Type '(state: FixMeAny | null | undefined, action: {    type: typeof IX2_RAW_DATA_IMPORTED;    payload: {        ixData: FixMeAny;    };}) => any' is not assignable to type 'Reducer<any>'.
         ixData,
         ixRequest,
         ixSession,
@@ -11090,34 +11104,39 @@
   function observeRequests(store) {
     observeStore2({
       store,
-      // @ts-expect-error - TS7031 - Binding element 'ixRequest' implicitly has an 'any' type.
-      select: ({ ixRequest: ixRequest2 }) => ixRequest2.preview,
+      select: ({
+        ixRequest: ixRequest2
+      }) => ixRequest2.preview,
       onChange: handlePreviewRequest
     });
     observeStore2({
       store,
-      // @ts-expect-error - TS7031 - Binding element 'ixRequest' implicitly has an 'any' type.
-      select: ({ ixRequest: ixRequest2 }) => ixRequest2.playback,
+      select: ({
+        ixRequest: ixRequest2
+      }) => ixRequest2.playback,
       onChange: handlePlaybackRequest
     });
     observeStore2({
       store,
-      // @ts-expect-error - TS7031 - Binding element 'ixRequest' implicitly has an 'any' type.
-      select: ({ ixRequest: ixRequest2 }) => ixRequest2.stop,
+      select: ({
+        ixRequest: ixRequest2
+      }) => ixRequest2.stop,
       onChange: handleStopRequest
     });
     observeStore2({
       store,
-      // @ts-expect-error - TS7031 - Binding element 'ixRequest' implicitly has an 'any' type.
-      select: ({ ixRequest: ixRequest2 }) => ixRequest2.clear,
+      select: ({
+        ixRequest: ixRequest2
+      }) => ixRequest2.clear,
       onChange: handleClearRequest
     });
   }
   function observeMediaQueryChange(store) {
     observeStore2({
       store,
-      // @ts-expect-error - TS7031 - Binding element 'ixSession' implicitly has an 'any' type.
-      select: ({ ixSession: ixSession2 }) => ixSession2.mediaQueryKey,
+      select: ({
+        ixSession: ixSession2
+      }) => ixSession2.mediaQueryKey,
       onChange: () => {
         stopEngine(store);
         clearAllStyles2({ store, elementApi: IX2BrowserApi_exports });
@@ -11129,8 +11148,9 @@
   function observeOneRenderTick(store, onTick) {
     const unsubscribe = observeStore2({
       store,
-      // @ts-expect-error - TS7031 - Binding element 'ixSession' implicitly has an 'any' type.
-      select: ({ ixSession: ixSession2 }) => ixSession2.tick,
+      select: ({
+        ixSession: ixSession2
+      }) => ixSession2.tick,
       // @ts-expect-error - TS7006 - Parameter 'tick' implicitly has an 'any' type.
       onChange: (tick) => {
         onTick(tick);
@@ -11200,7 +11220,12 @@
     stopEngine(store);
     clearAllStyles2({ store, elementApi: IX2BrowserApi_exports });
   }
-  function startEngine({ store, rawData, allowEvents, testManual }) {
+  function startEngine({
+    store,
+    rawData,
+    allowEvents,
+    testManual
+  }) {
     const { ixSession: ixSession2 } = store.getState();
     if (rawData) {
       store.dispatch(rawDataImported(rawData));
@@ -11376,6 +11401,7 @@
         return;
       }
       bindEventType({
+        // @ts-expect-error - TS7031 - Binding element 'logic' implicitly has an 'any' type.
         logic,
         store,
         events
@@ -11538,7 +11564,11 @@
       document.body.appendChild(style);
     }
   }
-  function renderInitialGroup({ store, actionListId, eventId }) {
+  function renderInitialGroup({
+    store,
+    actionListId,
+    eventId
+  }) {
     const { ixData: ixData2, ixSession: ixSession2 } = store.getState();
     const { actionLists, events } = ixData2;
     const event = events[eventId];
@@ -11558,7 +11588,12 @@
         const config = (
           // When useEventTarget is explicitly true, use event target/targets to query elements
           // However, skip this condition when objectId is defined
-          itemConfig?.target?.useEventTarget === true && itemConfig?.target?.objectId == null ? { target: event.target, targets: event.targets } : itemConfig
+          // @ts-expect-error - Property 'target' does not exist on type 'never'.
+          itemConfig?.target?.useEventTarget === true && // @ts-expect-error - Property 'target' does not exist on type 'never'.
+          itemConfig?.target?.objectId == null ? (
+            // @ts-expect-error - TS18048 - 'event' is possibly 'undefined'.
+            { target: event.target, targets: event.targets }
+          ) : itemConfig
         );
         const itemElements = getAffectedElements2({ config, event, elementApi: IX2BrowserApi_exports });
         const shouldUsePlugin = isPluginType2(actionTypeId);
@@ -11843,7 +11878,7 @@
     } = instance;
     const { ixData: ixData2, ixSession: ixSession2 } = store.getState();
     const { events } = ixData2;
-    const event = events[eventId] || {};
+    const event = events && events[eventId] ? events[eventId] : {};
     const { mediaQueries = ixData2.mediaQueryKeys } = event;
     if (!shouldAllowMediaQuery2(mediaQueries, ixSession2.mediaQueryKey)) {
       return;
